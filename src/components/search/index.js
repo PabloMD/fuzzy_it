@@ -5,30 +5,41 @@ import Results from "./results";
 const Search = ({ data }) => {
   const [input, setInput] = useState('')
   const [results, setResults] = useState([])
-  const options = {
-    // isCaseSensitive: false,
-    includeScore: true,
-    // shouldSort: true,
-    includeMatches: true,
-    // findAllMatches: false,
-    // minMatchCharLength: 1,
-    // location: 0,
-    // threshold: 0.6,
-    // distance: 100,
-    // useExtendedSearch: false,
-    ignoreLocation: true,
-    ignoreFieldNorm: true,
-    // fieldNormWeight: 1,
-    keys: [
-      "profile.name",
-      "favouriteWords"
-    ]
-  }
-  const fuse = new Fuse(data, options);
+  const [fuse, setFuse] = useState()
 
   useEffect(() => {
-    setResults(fuse.search(input))
-  }, [input])
+    const options = {
+      // isCaseSensitive: false,
+      includeScore: true,
+      // shouldSort: true,
+      includeMatches: true,
+      // findAllMatches: false,
+      // minMatchCharLength: 1,
+      // location: 0,
+      // threshold: 0.6,
+      // distance: 100,
+      // useExtendedSearch: false,
+      ignoreLocation: true,
+      ignoreFieldNorm: true,
+      // fieldNormWeight: 1,
+      keys: [
+        "profile.name",
+        "profile.about",
+        {
+          name: 'favouriteWords',
+          weight: 1.5
+        }
+      ]
+    }
+
+    setFuse(new Fuse(data, options))
+  }, [data])
+
+  useEffect(() => {
+    if(fuse){
+      setResults(fuse.search(input))
+    }
+  }, [fuse, input])
 
   return (
     <React.Fragment>
